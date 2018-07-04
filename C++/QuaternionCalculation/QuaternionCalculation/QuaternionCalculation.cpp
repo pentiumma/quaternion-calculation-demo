@@ -112,8 +112,8 @@ int main()
   PrintMat(M_B_C_3);
   Vector3f euler_angles = M_B_C_3.eulerAngles(2, 1, 0);
   printf("euler angles in ZYX order: \n");
-  printf("%f, %f, %f\n", gamma, beta, alpha);
-  PrintVec(euler_angles);
+  printf("%f, %f, %f\n", R2D(gamma), R2D(beta), R2D(alpha));
+  PrintVec(R2D(euler_angles));
 
   getchar();
   return 0;
