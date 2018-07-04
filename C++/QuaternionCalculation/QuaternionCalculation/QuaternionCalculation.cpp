@@ -1,6 +1,3 @@
-// QuaternionCalculation.cpp : 定义控制台应用程序的入口点。
-//
-
 #include "stdafx.h"
 
 #define D2R(x)  x * 3.14159f / 180.0f
