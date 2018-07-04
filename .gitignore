@@ -1,0 +1,8 @@
+
+*.ipch
+*.db
+*.opendb
+*.tlog
+*.iobj
+*.ipdb
+C++/QuaternionCalculation/Eigen-3.3.4
