@@ -1,7 +1,5 @@
 #include "stdafx.h"
-
-#define D2R(x)  x * 3.14159f / 180.0f
-#define R2D(x)  x * 180.0f / 3.14159f
+#include "QuatBase.h"
 
 void PrintVec(const Vector3f& v)
 {
@@ -100,6 +98,7 @@ int main()
   PrintMat(M_B_C_2);
 
   // 4. Quaternion/Rotational matrix and Euler angle conversion
+  // B rotate gamma, beta, alpha in 'ZYX' order to get C
   float alpha = D2R(0.0f);   // rotation angle around x axis
   float beta = D2R(90.0f);   // rotation angle around y axis
   float gamma = D2R(180.0f); // rotation angle around z axis
@@ -114,6 +113,14 @@ int main()
   printf("euler angles in ZYX order: \n");
   printf("%f, %f, %f\n", R2D(gamma), R2D(beta), R2D(alpha));
   PrintVec(R2D(euler_angles));
+  // Use cutomized quat-euler angle conversion
+  Vector3f euler_angles_2(R2D(gamma), R2D(beta), R2D(alpha));
+  Quaternionf q_B_C_2 = QuatBase::EulerToQuat(RO_ZYX, euler_angles_2);
+  printf("q_B_C: \n");
+  PrintQuat(q_B_C_2);
+  euler_angles_2 = QuatBase::QuatToEulerAngle(RO_ZYX, q_B_C);
+  printf("Euler angles: \n");
+  PrintVec(euler_angles_2);
 
   getchar();
   return 0;
