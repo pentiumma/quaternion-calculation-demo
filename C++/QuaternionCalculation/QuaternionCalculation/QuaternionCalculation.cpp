@@ -25,13 +25,13 @@ int main()
 
   // Define three coordinate systems (CS):
   // A: x - East, y - North, z - Up
-  // B: x - West, y - South, z - Up   (A rotate around its z axis with 180 degree)
-  // C: x - Down, y - North, z - East (A rotate around its y axis with 90  degree)
+  // B: x - North, y - West, z - Up   (A rotate around its z axis with 90 degree)
+  // C: x - Down, y - North, z - East (A rotate around its y axis with 90 degree)
 
   // 1. Quaternion construction
   // Rotation from A to B:
   Vector3f r1_A(0.0f, 0.0f, 1.0f);  // rotation axis: z axis of A
-  float theta1 = D2R(180.0f);  // rotation angle (following right-hand rule)
+  float theta1 = D2R(90.0f);  // rotation angle (following right-hand rule)
   // Rotation from A to C:
   Vector3f r2_A(0.0f, 1.0f, 0.0f);  // rotation axis: y axis of A
   float theta2 = D2R(90.0f);   // rotation angle (following right-hand rule)
@@ -63,7 +63,7 @@ int main()
   // 3. Quaternion and rotational matrix conversion
   Matrix3f M_A_B_1 = q_A_B.toRotationMatrix();
   Matrix3f M_A_B_2;
-  Vector3f yA_B(0.0f, -1.0f, 0.0f);
+  Vector3f yA_B(1.0f, 0.0f, 0.0f);
   Vector3f zA_B(0.0f, 0.0f, 1.0f);
   M_A_B_2.col(0) = xA_B;
   M_A_B_2.col(1) = yA_B;
@@ -85,9 +85,9 @@ int main()
   PrintMat(M_A_C_1);
   PrintMat(M_A_C_2);
 
-  Matrix3f M_B_C_1 = M_A_C * M_A_B.conjugate();
+  Matrix3f M_B_C_1 = M_A_C * M_A_B.transpose();
   Matrix3f M_B_C_2;
-  Vector3f yB_C(0.0f, -1.0f, 0.0f);
+  Vector3f yB_C(0.0f, 0.0f, -1.0f);
   Vector3f zB_C(-1.0f, 0.0f, 0.0f);
   M_B_C_2.col(0) = xB_C;
   M_B_C_2.col(1) = yB_C;
@@ -101,25 +101,24 @@ int main()
   // B rotate gamma, beta, alpha in 'ZYX' order to get C
   float alpha = D2R(0.0f);   // rotation angle around x axis
   float beta = D2R(90.0f);   // rotation angle around y axis
-  float gamma = D2R(180.0f); // rotation angle around z axis
+  float gamma = D2R(-90.0f);  // rotation angle around z axis
   Matrix3f M_B_C_3;
-  M_B_C_3 = AngleAxisf(gamma, Vector3f::UnitZ())
+  M_B_C_3 = (AngleAxisf(gamma, Vector3f::UnitZ())
     * AngleAxisf(beta, Vector3f::UnitY())
-    * AngleAxisf(alpha, Vector3f::UnitX());
-  printf("M_B_C: ");
+    * AngleAxisf(alpha, Vector3f::UnitX())).inverse();
+  printf("M_B_C: \n");
   PrintMat(M_B_C);
   PrintMat(M_B_C_3);
-  Vector3f euler_angles = M_B_C_3.eulerAngles(2, 1, 0);
-  printf("euler angles in ZYX order: \n");
-  printf("%f, %f, %f\n", R2D(gamma), R2D(beta), R2D(alpha));
-  PrintVec(R2D(euler_angles));
-  // Use cutomized quat-euler angle conversion
-  Vector3f euler_angles_2(R2D(gamma), R2D(beta), R2D(alpha));
-  Quaternionf q_B_C_2 = QuatBase::EulerToQuat(RO_ZYX, euler_angles_2);
+  Quaternionf q_B_C_2(M_B_C_3);
   printf("q_B_C: \n");
   PrintQuat(q_B_C_2);
-  euler_angles_2 = QuatBase::QuatToEulerAngle(RO_ZYX, q_B_C);
-  printf("Euler angles: \n");
+  // Use cutomized quat-euler angle conversion
+  Vector3f euler_angles_2(R2D(gamma), R2D(beta), R2D(alpha));
+  Quaternionf q_B_C_3 = QuatBase::EulerToQuat(RO_ZYX, euler_angles_2).inverse();
+  PrintQuat(q_B_C_3);
+  euler_angles_2 = QuatBase::QuatToEulerAngle(RO_ZYX, q_B_C_3.inverse());
+  printf("euler angles in ZYX order: \n");
+  printf("%f, %f, %f\n", R2D(gamma), R2D(beta), R2D(alpha));
   PrintVec(euler_angles_2);
 
   getchar();
