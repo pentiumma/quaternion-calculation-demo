@@ -9,7 +9,6 @@ Created on Wed Jul  4 10:13:01 2018
 
 import math
 import numpy as np
-from numpy import linalg as la
 from transforms3d import quaternions as quat
 from transforms3d import euler
 
