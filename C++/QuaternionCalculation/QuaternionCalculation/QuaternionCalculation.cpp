@@ -121,6 +121,30 @@ int main()
   printf("%f, %f, %f\n", R2D(gamma), R2D(beta), R2D(alpha));
   PrintVec(euler_angles_2);
 
+  // 5. Identify rotation axis given two quaternion
+  // use A & B for example, consider C is the global coordinate system
+  // define q = q_B_C * q_C_A, then the vector part of q is the rotation axis from A to B in C,
+  // and the norm of vector part is just the sin(rotation angle / 2)
+  Quaternionf q = q_B_C * q_A_C.inverse();
+  Vector3f v(q.x(), q.y(), q.z());
+  float vn = v.norm();
+  v = v / vn;
+  float theta = R2D(asin(vn)) * 2.0f;
+  printf("Rotation axis from A to B in C:\n");
+  PrintVec(v);
+  printf("rotation angle is: \n");
+  printf("%f\n", theta);
+  // In addition, consider A & C
+  q = q_B_C.inverse() * q_A_B.inverse();
+  v = Vector3f(q.x(), q.y(), q.z());
+  vn = v.norm();
+  v = v / vn;
+  theta = R2D(asin(vn)) * 2.0f;
+  printf("Rotation axis from A to C in B:\n");
+  PrintVec(v);
+  printf("rotation angle is: \n");
+  printf("%f\n", theta);
+
   getchar();
   return 0;
 }

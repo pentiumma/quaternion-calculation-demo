@@ -6,8 +6,8 @@ addpath('functions')
      
 % Define three coordinate systems (CS):
 % A: x - East, y - North, z - Up
-% B: x - West, y - South, z - Up   (A rotate around its z axis with 180 degree)
-% C: x - Down, y - North, z - East (A rotate around its y axis with 90  degree)
+% B: x - North, y - West, z - Up   (A rotate around its z axis with 90 degree)
+% C: x - Down, y - North, z - East (A rotate around its y axis with 90 degree)
 
 % 1. Quaternion construction
 % Rotation from A to B:
@@ -64,6 +64,22 @@ q_B_C = quatinv(angle2quat(gamma, beta, alpha, 'ZYX'))
 R2D(gamma_res)
 R2D(beta_res)
 R2D(alpha_res)
+
+% 5. Identify rotation axis given two quaternion
+% use A & B for example, consider C is the global coordinate system
+% define q = q_B_C * q_C_A, then the vector part of q is the rotation axis
+% from A to B in C, and the norm of vector part is just sin(rotation angle/2)
+q = quatmultiply(q_B_C, quatinv(q_A_C));
+v = q(2:4);
+vn = norm(v);
+v_AB = v/vn
+theta_AB = asind(vn) * 2
+% In addtion, consider A & C
+q = quatmultiply(quatinv(q_B_C), quatinv(q_A_B));
+v = q(2:4);
+vn = norm(v);
+v_AC = v/vn
+theta_AC = asind(vn) * 2
 
 function b = D2R(a)
 b = a*3.14159/180.0;

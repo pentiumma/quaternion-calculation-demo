@@ -7,6 +7,7 @@ Demo code for basic quaternion calculation
 
 import math
 import numpy as np
+from numpy import linalg as LA
 from transforms3d import quaternions as quat
 from transforms3d import euler
 
@@ -107,4 +108,28 @@ euler_angles = euler.mat2euler(M_B_C_3.T, 'rzyx')
 print("euler angles in ZYX order: ")
 print(R2D(gamma), R2D(beta), R2D(alpha))
 print([R2D(angle) for angle in euler_angles])
+
+# 5. Identify rotation axis given two quaternion
+# use A & B for example, consider C is the global coordinate system
+# define q = q_B_C * q_C_A, then the vector part of q is the rotation axis from A to B in C,
+# and the norm of vector part is just the sin(rotation angle / 2)
+q = quat.qmult(q_B_C, quat.qinverse(q_A_C))
+v = np.array([q[1], q[2], q[3]])
+vn = LA.norm(v)
+v = v/vn
+theta = R2D(math.asin(vn)) * 2.0
+print("Rotation axis from A to B in C:")
+print(v)
+print("rotation angle:")
+print(theta)
+# In addition, consider A & C
+q = quat.qmult(quat.qinverse(q_B_C), quat.qinverse(q_A_B))
+v = np.array([q[1], q[2], q[3]])
+vn = LA.norm(v)
+v = v/vn
+theta = R2D(math.asin(vn)) * 2.0
+print("Rotation axis from A to C in B:")
+print(v)
+print("rotation angle:")
+print(theta)
 
