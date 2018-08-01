@@ -2,7 +2,7 @@
 """
 Demo code for basic quaternion calculation
 
-@author: mahao
+@author: Hao Ma
 """
 
 import math
