@@ -97,16 +97,21 @@ print(M_B_C_1)
 print(M_B_C_2)
 
 # 4. Quaternion/Rotational matrix and Euler angle conversion
-alpha = D2R(0.0)  # rotation angle around x axis
+alpha = D2R(90.0)  # rotation angle around x axis
 beta = D2R(90.0)  # rotation angle around y axis
-gamma = D2R(-90.0)  # rotation angle around z axis
+gamma = D2R(0.0)  # rotation angle around z axis
 M_B_C_3 = np.eye(3)
 M_B_C_3 = (euler.euler2mat(gamma, beta, alpha, 'rzyx')).T
 print("M_B_C: ")
 print(M_B_C_3)
+Q_B_C_3 = quat.qinverse(euler.euler2quat(gamma, beta, alpha, 'rzyx'))
+print("Q_B_C: ")
+print(Q_B_C_3)
 euler_angles = euler.mat2euler(M_B_C_3.T, 'rzyx')
 print("euler angles in ZYX order: ")
 print(R2D(gamma), R2D(beta), R2D(alpha))
+print([R2D(angle) for angle in euler_angles])
+euler_angles = euler.quat2euler(quat.qinverse(Q_B_C_3), 'rzyx')
 print([R2D(angle) for angle in euler_angles])
 
 # 5. Identify rotation axis given two quaternion
